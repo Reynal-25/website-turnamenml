@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Website manajemen turnamen Mobile Legends 9 tim ala MPL ID.">
+  <title id="documentTitle">MLBB Tournament</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><img id="brandLogo" src="" alt="Logo"></div>
+      <div>
+        <strong id="brandTournamentName">MLBB TOURNAMENT</strong>
+        <span id="brandSubtitle">REGULAR SEASON</span>
+      </div>
+    </div>
+    <button class="mobile-menu" id="mobileMenuBtn">☰</button>
+    <nav id="mainNav">
+      <button class="nav-btn active" data-page="home">Dashboard</button>
+      <button class="nav-btn" data-page="standings">Klasemen</button>
+      <button class="nav-btn" data-page="schedule">Jadwal</button>
+      <button class="nav-btn" data-page="results">Hasil</button>
+      <button class="nav-btn" data-page="teams">Teams & Roster</button>
+      <button class="nav-btn" data-page="playoffs">Playoff</button>
+      <button class="nav-btn" data-page="settings">⚙ Editor</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section id="home" class="page active">
+      <div class="hero">
+        <div>
+          <span class="eyebrow">MOBILE LEGENDS • ESPORTS MANAGEMENT</span>
+          <h1 id="heroTitle">TURNAMEN <span>MLBB</span><br>9 TIM</h1>
+          <p id="heroDescription">Kelola roster, logo, jadwal, hasil BO3, klasemen otomatis, dan playoff dalam satu dashboard.</p>
+          <div class="hero-actions">
+            <button class="primary" onclick="showPage('standings')">Lihat Klasemen</button>
+            <button class="secondary" onclick="showPage('teams')">Kelola Tim</button>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-title">FORMAT</div>
+          <div class="format-grid">
+            <div><b id="formatTeams">9</b><span>Tim</span></div>
+            <div><b id="formatMatches">72</b><span>Match</span></div>
+            <div><b>BO3</b><span>Regular</span></div>
+            <div><b id="formatPlayoff">6</b><span>Playoff</span></div>
+          </div>
+          <p class="small-note">Double round-robin: setiap tim bertemu tim lain 2 kali.</p>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <div><span class="eyebrow">OVERVIEW</span><h2>Statistik Turnamen</h2></div>
+      </div>
+      <div class="stats-grid">
+        <article class="stat-card"><span>Total Tim</span><b id="statTeams">9</b><small>peserta</small></article>
+        <article class="stat-card"><span>Total Match</span><b id="statMatches">72</b><small>regular season</small></article>
+        <article class="stat-card"><span>Match Selesai</span><b id="statPlayed">0</b><small>dari 72</small></article>
+        <article class="stat-card"><span>Game Dimainkan</span><b id="statGames">0</b><small>total game</small></article>
+      </div>
+
+      <div class="dashboard-grid">
+        <section class="panel">
+          <div class="panel-title"><h3>Top Klasemen</h3><button class="text-btn" onclick="showPage('standings')">Lihat semua →</button></div>
+          <div id="miniStandings"></div>
+        </section>
+        <section class="panel">
+          <div class="panel-title"><h3>Match Terbaru</h3><button class="text-btn" onclick="showPage('results')">Semua hasil →</button></div>
+          <div id="recentMatches"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="standings" class="page">
+      <div class="page-heading"><div><span class="eyebrow">REGULAR SEASON</span><h2>Klasemen</h2><p>Match Point, Match W-L, Net Game Win, dan Game W-L dihitung otomatis.</p></div><button class="secondary" onclick="resetAllResults()">Reset Semua Hasil</button></div>
+      <div class="info-banner"><b>Sistem poin:</b> menang seri = <strong>+1 Match Point</strong>, kalah = 0. Peringkat diurutkan berdasarkan Match Point → Match W-L → Net Game Win → Game W-L.</div>
+      <div class="table-wrap"><table class="standings-table"><thead><tr><th>#</th><th>TEAM</th><th>MP</th><th>M W-L</th><th>NGW</th><th>G W-L</th><th>WIN %</th></tr></thead><tbody id="standingsBody"></tbody></table></div>
+    </section>
+
+    <section id="schedule" class="page">
+      <div class="page-heading"><div><span class="eyebrow">REGULAR SEASON</span><h2>Jadwal Pertandingan</h2><p>Format double round-robin, BO3.</p></div><div class="filter-row"><select id="scheduleRoundFilter"><option value="all">Semua Round</option></select><select id="scheduleStatusFilter"><option value="all">Semua Status</option><option value="upcoming">Belum Main</option><option value="played">Selesai</option></select></div></div>
+      <div id="scheduleList" class="schedule-list"></div>
+    </section>
+
+    <section id="results" class="page">
+      <div class="page-heading"><div><span class="eyebrow">MATCH RESULTS</span><h2>Input Hasil</h2><p>Masukkan skor game BO3. Klasemen akan diperbarui otomatis.</p></div></div>
+      <div class="info-banner">Contoh BO3: <strong>2–0</strong> atau <strong>2–1</strong>. Tim yang lebih dulu mencapai 2 kemenangan menjadi pemenang.</div>
+      <div id="resultsList" class="results-list"></div>
+    </section>
+
+    <section id="teams" class="page">
+      <div class="page-heading"><div><span class="eyebrow">TEAM MANAGEMENT</span><h2>Teams & Roster</h2><p>Ubah nama tim, logo, pemain utama, role, cadangan, dan coach. Tambah atau hapus tim juga akan otomatis menyesuaikan jadwal dan hasil.</p></div><button class="primary" onclick="openTeamModal(null)">＋ Tambah/Edit Tim</button></div>
+      <div id="teamsGrid" class="teams-grid"></div>
+    </section>
+
+    <section id="settings" class="page">
+      <div class="page-heading"><div><span class="eyebrow">TOURNAMENT EDITOR</span><h2>Editor Turnamen</h2><p>Ubah nama, logo, dan metode playoff. Pengaturan tersimpan otomatis di browser.</p></div></div>
+      <div class="settings-grid">
+        <section class="panel settings-panel">
+          <h3>Identitas Turnamen</h3>
+          <form id="settingsForm">
+            <label>Nama Turnamen<input id="tournamentName" required maxlength="60" placeholder="Contoh: MPL Nova Cup Season 1"></label>
+            <label>Logo Turnamen<input id="tournamentLogo" type="file" accept="image/*"><small class="file-help">PNG/JPG/WebP. Logo disimpan di browser.</small></label>
+            <div class="tournament-logo-preview"><img id="tournamentLogoPreview" alt="Preview logo"><span id="tournamentLogoPlaceholder">LOGO</span></div>
+            <label>Metode Playoff
+              <select id="playoffMethod">
+                <option value="mpl6">6 Tim — MPL Style (Double Elimination)</option>
+                <option value="single8">8 Tim — Single Elimination</option>
+                <option value="double8">8 Tim — Double Elimination</option>
+                <option value="single6">6 Tim — Single Elimination</option>
+                <option value="single4">4 Tim — Single Elimination</option>
+                <option value="custom">Buat Sendiri — Custom Bracket</option>
+              </select>
+            </label>
+            <div id="playoffMethodHelp" class="info-banner"></div>
+            <div id="customBracketEditor" class="custom-editor" style="display:none">
+              <div class="custom-editor-head"><div><h4>Bracket Buatan Saya</h4><p>Buat ronde dan match sendiri. Peserta bisa berupa rank klasemen, TBD, winner/loser match, atau nama lain.</p></div><div class="custom-editor-actions"><button type="button" class="secondary" onclick="addCustomRound()">＋ Tambah Ronde</button><button type="button" class="delete-btn" onclick="resetCustomBracket()">Reset</button></div></div>
+              <div id="customRoundsEditor"></div>
+            </div>
+            <div class="modal-actions"><button type="submit" class="primary">Simpan Pengaturan</button></div>
+          </form>
+        </section>
+        <section class="panel">
+          <div class="panel-title"><h3>Preview</h3></div>
+          <div class="editor-preview">
+            <img id="editorBrandLogo" alt="Logo turnamen">
+            <div><b id="editorBrandName">MLBB TOURNAMENT</b><small id="editorBrandMethod">6 Tim — MPL Style</small></div>
+          </div>
+          <div class="info-banner" style="margin-top:15px">Jika jumlah tim kurang dari jumlah peserta playoff, sistem akan memakai sebanyak mungkin tim dari klasemen sesuai metode yang dipilih.</div>
+        </section>
+      </div>
+    </section>
+
+    <section id="playoffs" class="page">
+      <div class="page-heading"><div><span class="eyebrow">KNOCKOUT STAGE</span><h2 id="playoffTitle">Playoff</h2><p id="playoffDescription">Metode playoff dapat diubah melalui Editor Turnamen.</p></div></div>
+      <div class="playoff-note" id="playoffNote"></div>
+      <div class="bracket" id="bracket"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div><strong id="footerTournamentName">MLBB TOURNAMENT</strong> <span id="footerTournamentEdition">• Tournament Edition</span></div>
+    <div>Data tersimpan otomatis di browser (localStorage).</div>
+  </footer>
+
+  <div class="modal-backdrop" id="teamModal">
+    <div class="modal team-modal">
+      <div class="modal-head"><div><span class="eyebrow">TEAM EDITOR</span><h3 id="teamModalTitle">Edit Tim</h3></div><button class="close-btn" onclick="closeTeamModal()">×</button></div>
+      <form id="teamForm">
+        <input type="hidden" id="teamId">
+        <div class="form-grid two">
+          <label>Nama Tim<input id="teamName" required maxlength="30" placeholder="Contoh: Alpha Esports"></label>
+          <label>Tag<input id="teamTag" required maxlength="6" placeholder="ALP"></label>
+        </div>
+        <label>Logo Tim<input id="teamLogo" type="file" accept="image/*"><small class="file-help">PNG/JPG/WebP. Logo disimpan di browser.</small></label>
+        <div class="logo-preview"><img id="logoPreview" alt="Preview logo"><span id="logoPlaceholder">LOGO</span></div>
+        <h4>Pemain Utama</h4>
+        <div class="players-grid" id="mainPlayers"></div>
+        <h4>Pemain Cadangan</h4>
+        <div class="players-grid" id="subPlayers"></div>
+        <h4>Coach</h4>
+        <input id="coachName" maxlength="40" placeholder="Nama coach">
+        <div class="modal-actions"><button type="button" class="secondary" onclick="closeTeamModal()">Batal</button><button type="submit" class="primary">Simpan Tim</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
